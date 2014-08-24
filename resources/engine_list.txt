@@ -1,0 +1,2 @@
+hoichess
+gnuchess
