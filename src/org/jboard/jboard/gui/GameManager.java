@@ -1,6 +1,7 @@
 package org.jboard.jboard.gui;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.jboard.jboard.bridge.ChessSystem;
 import org.jboard.jboard.chessengine.ChessEngine;
@@ -18,8 +20,10 @@ import org.jboard.jboard.chessengine.ChessEngineProcess;
 import org.jboard.jboard.chessengine.PipelinedChessEngine;
 import org.jboard.jboard.gui.board.BoardPanel;
 import org.jboard.jboard.utilities.Container;
+import org.jboard.jboard.utilities.JavaSystemUtilities;
 
 import static org.jboard.jboard.Constants.*;
+import static org.jboard.jboard.utilities.StringUtils.localized;
 
 /**
  * A focal point for all the components from which the program is composed.
@@ -79,13 +83,25 @@ public class GameManager
 	
 	public void userSelectedEngine(String engine)
 	{
+		boolean changed = !(selectedChessEngine.equals(engine));
 		selectedChessEngine = engine;
+		selectedJarChessEngine=null;
 		if (!(chessEngineList.contains(engine)))
 		{
 			chessEngineList.add(engine);
 		}
+		if (changed)
+		{
+			JOptionPane.showMessageDialog(frame, localized("selection_message"), localized("message"), JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
+	public void userSelectedJarEngine(File jarEngine)
+	{
+		selectedChessEngine=null;
+		selectedJarChessEngine=jarEngine;
+		JOptionPane.showMessageDialog(frame, localized("selection_message"), localized("message"), JOptionPane.INFORMATION_MESSAGE);
+	}
 	
 	public ChessEngineConfiguration getCurrentEngineConfiguration()
 	{
@@ -129,7 +145,23 @@ public class GameManager
 	{
 		PipelinedChessEngine engine = new PipelinedChessEngine(chessSystem);
 		
-		List<String> command = Arrays.asList(new String[]{selectedChessEngine});
+		List<String> command = null;
+		if (selectedJarChessEngine!=null)
+		{
+			
+			command = Arrays.asList(new String[]{JavaSystemUtilities.getJavaExecutable().getPath(),"-server","-Xmx512m","-jar",selectedJarChessEngine.getPath()});
+		}
+		else if (selectedChessEngine!=null)
+		{
+			command = Arrays.asList(new String[]{selectedChessEngine});	
+		}
+		else
+		{
+			throw new RuntimeException("No engine selected.");
+		}
+		
+		
+		
 		ChessEngineProcess process = new ChessEngineProcess(command,".",engine);
 		processContainer.set(process);
 		engine.registerProcess(processContainer);
@@ -189,6 +221,7 @@ public class GameManager
 	protected final Images<?> images;
 
 	private String selectedChessEngine = null;
+	private File selectedJarChessEngine = null;
 	private List<String> chessEngineList = null;
 	
 	protected ChessEngine chessEngine = null;

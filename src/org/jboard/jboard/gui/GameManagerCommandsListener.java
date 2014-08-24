@@ -37,6 +37,10 @@ public class GameManagerCommandsListener implements ActionListener
 			{
 				gameManager.userSelectedEngine(engineSelectionDialog.getSelectedEngine());
 			}
+			else if (engineSelectionDialog.isJarSelected())
+			{
+				gameManager.userSelectedJarEngine(engineSelectionDialog.getSelectedJarFile());
+			}
 		}
 		else if (e.getActionCommand().equals("start_identical"))
 		{
