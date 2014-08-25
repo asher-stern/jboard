@@ -18,6 +18,7 @@ import org.jboard.jboard.gui.Images;
 import org.jboard.jboard.utilities.GuiUtilities;
 
 /**
+ * A dialog box to select a new piece given in a promotion of a pawn.
  * 
  * @author Asher Stern
  * Date: Jul 17, 2014

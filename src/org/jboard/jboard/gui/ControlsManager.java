@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import org.jboard.jboard.gui.board.BoardPanel;
 
 /**
+ * Includes some GUI controls that should be enabled and disabled by the {@link GameManager}.
  * 
  * @author Asher Stern
  * Date: Aug 25, 2014

@@ -47,6 +47,10 @@ public class GameManager
 		loadChessEngineList();
 	}
 	
+	/**
+	 * Set the {@link ControlsManager} to be managed by this {@link GameManager}.
+	 * @param controlsManager
+	 */
 	public void setControlsManager(ControlsManager controlsManager)
 	{
 		this.controlsManager = controlsManager;

@@ -1,6 +1,7 @@
 package org.jboard.jboard.gui.board;
 
 /**
+ * A direction of the mark-rectangle on the chess board.
  * 
  * @author Asher Stern
  * Date: Jul 16, 2014

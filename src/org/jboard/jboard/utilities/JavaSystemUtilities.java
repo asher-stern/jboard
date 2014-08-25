@@ -3,7 +3,7 @@ package org.jboard.jboard.utilities;
 import java.io.File;
 
 /**
- * 
+ * General utilities for JVM.
  *
  * @author Asher Stern
  * Date: Aug 24, 2014

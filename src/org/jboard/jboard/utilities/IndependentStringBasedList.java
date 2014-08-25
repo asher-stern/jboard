@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ * A list which is stored in a map, where each key in that map is the list name concatenated
+ * with a number.
  *
  * @author Asher Stern
  * Date: Aug 25, 2014

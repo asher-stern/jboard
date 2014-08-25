@@ -28,6 +28,7 @@ import org.jboard.jboard.utilities.FileUtilities;
 import org.jboard.jboard.utilities.GuiUtilities;
 
 /**
+ * A dialog box presented to select the actual underlying chess engine to be used.
  * 
  * @author Asher Stern
  * Date: Aug 24, 2014
@@ -48,10 +49,23 @@ public class EngineSelectionDialog extends JDialog implements ActionListener, It
 	
 	
 
+	/**
+	 * If the user selected a native program chess engine (not a jar file), then this
+	 * method returns that chess engine, as should be typed to command line. Otherwise, returns null.
+	 * @return The native-program chess-engine selected by the user, or null if the user did not
+	 * select a native-program chess-engine, but rather a jar file.
+	 */
 	public String getSelectedEngine()
 	{
 		return selectedEngine;
 	}
+	
+	/**
+	 * Returns a jar file, selected by the user as the chess-engine, or null if the user did not
+	 * select a jar file chess-engine.
+	 * @return a jar file, selected by the user as the chess-engine, or null if the user did not
+	 * select a jar file chess-engine.
+	 */
 	public File getSelectedJarFile()
 	{
 		return selectedJarFile;

@@ -13,7 +13,8 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
- * 
+ * A subclass of java.util.ResourceBundle.Control which is able to load properties file encoded
+ * in UTF8.
  *
  * @author Asher Stern
  * Date: Aug 20, 2014

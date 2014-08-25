@@ -6,7 +6,7 @@ import java.awt.Window;
 import javax.swing.JDialog;
 
 /**
- * 
+ * General utilities for Swing GUI.
  *
  * @author Asher Stern
  * Date: Aug 21, 2014

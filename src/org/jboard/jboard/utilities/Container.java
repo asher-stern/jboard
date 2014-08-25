@@ -1,6 +1,8 @@
 package org.jboard.jboard.utilities;
 
 /**
+ * Holds an object, which can be changed by the {@link #set(Object)} method, and retrieved
+ * by the {@link #get()} method.
  * 
  * @author Asher Stern
  * Date: Aug 4, 2014

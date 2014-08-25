@@ -3,7 +3,7 @@ package org.jboard.jboard.utilities;
 import java.io.File;
 
 /**
- * 
+ * Utilities for files.
  *
  * @author Asher Stern
  * Date: Aug 24, 2014

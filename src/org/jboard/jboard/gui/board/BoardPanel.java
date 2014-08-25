@@ -36,6 +36,8 @@ import org.jboard.jboard.gui.ScaledImages;
 import static org.jboard.jboard.Constants.*;
 
 /**
+ * A JPanel in which the chess board is printed.
+ * This panel is also responsible for keyboard events which move pieces on the board.
  * 
  * @author Asher Stern
  * Date: Jul 15, 2014
@@ -430,7 +432,15 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	
 	//////////////////// NESTED CLASS AnimationRunnable ////////////////////
 	
-	
+	/**
+	 * Makes an animated move of a piece from one square to another.
+	 * This class is used as the Runnable of a separated thread which changes the location of the piece on the
+	 * board every few milliseconds.
+	 * <BR>
+	 * Note that animation is used both for user moves and computer (engine) moves.
+	 *
+	 *
+	 */
 	protected class AnimationRunnable implements Runnable
 	{
 		public AnimationRunnable(SquareCoordinates source,

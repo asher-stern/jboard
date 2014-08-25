@@ -3,6 +3,7 @@ package org.jboard.jboard.utilities;
 import java.util.*;
 
 /**
+ * Utilities to detect the operating system, and get OS dependent information.
  * 
  * @author Asher Stern
  *

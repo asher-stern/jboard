@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.util.List;
 
 /**
+ * Runs an external process, while letting the user to write lines into the process' standard
+ * input, and asynchronously get lines from the process' standard output.
  * 
  * @author Asher Stern
  * Date: Jul 22, 2014

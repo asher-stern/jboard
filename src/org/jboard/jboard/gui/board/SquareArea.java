@@ -1,6 +1,7 @@
 package org.jboard.jboard.gui.board;
 
 /**
+ * Coordinates of a square on the chess-board in the {@link BoardPanel}.
  * 
  * @author Asher Stern
  * Date: Jul 17, 2014
