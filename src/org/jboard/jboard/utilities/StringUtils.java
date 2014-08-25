@@ -20,13 +20,18 @@ public class StringUtils
 	{
 		for (String inIterable : iterable)
 		{
-			if (str.startsWith(inIterable))
+			if (startsWithIgnoreCase(str,inIterable))
 			{
 				if (outputString!=null) {outputString.set(inIterable);}
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public static boolean startsWithIgnoreCase(String main, String prefix)
+	{
+		return main.toLowerCase().startsWith(prefix.toLowerCase());
 	}
 	
 	public static String localized(String str)
