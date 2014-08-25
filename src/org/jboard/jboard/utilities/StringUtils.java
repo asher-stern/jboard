@@ -1,5 +1,6 @@
 package org.jboard.jboard.utilities;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -64,6 +65,20 @@ public class StringUtils
 	public static String localized(String str)
 	{
 		return ResourceBundle.getBundle("jboard", Locale.getDefault(), UTF8RsourceBundleControl.INSTANCE).getString(str);
+	}
+	
+	public static String collectionToString(Collection<String> collection, String delimiter)
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean firstIteration = true;
+		for (String str : collection)
+		{
+			if (firstIteration){firstIteration=false;}
+			else {sb.append(delimiter);}
+			
+			sb.append(str);
+		}
+		return sb.toString();
 	}
 
 }

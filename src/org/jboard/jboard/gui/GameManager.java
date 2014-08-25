@@ -1,6 +1,7 @@
 package org.jboard.jboard.gui;
 
 import static org.jboard.jboard.Constants.CHESS_ENGINE_LIST_FILE;
+import static org.jboard.jboard.utilities.StringUtils.localized;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.jboard.jboard.bridge.ChessSystem;
 import org.jboard.jboard.chessengine.ChessEngine;
@@ -23,6 +25,7 @@ import org.jboard.jboard.chessengine.PipelinedChessEngine;
 import org.jboard.jboard.gui.board.BoardPanel;
 import org.jboard.jboard.utilities.Container;
 import org.jboard.jboard.utilities.JavaSystemUtilities;
+import org.jboard.jboard.utilities.StringUtils;
 
 /**
  * A focal point for all the components from which the program is composed.
@@ -62,7 +65,8 @@ public class GameManager
 
 	public List<String> getChessEngineList()
 	{
-		return chessEngineList;
+		
+		return Collections.unmodifiableList(chessEngineList);
 	}
 
 
@@ -73,9 +77,20 @@ public class GameManager
 		boardPanel.resetBoard();
 		
 		ChessSystem chessSystem = new ChessSystem(boardPanel,frame, images);
-		boardPanel.registerActivator(chessSystem);
-		
+		try
+		{
 		chessEngine = createChessEngine(chessSystem);
+		}
+		catch(ProcessRunFailedException e)
+		{
+			String exceptionMessage = e.getMessage()+ ((e.getCause()!=null)?("\n"+e.getCause().getMessage()):"");
+			JOptionPane.showMessageDialog(frame, localized("failed_run_process")+"\n"+exceptionMessage, localized("failed_run_process"), JOptionPane.ERROR_MESSAGE);
+			chessEngine = new DummyChessEngine();
+			chessEngine.init();
+
+		}
+		
+		boardPanel.registerActivator(chessSystem);
 		chessSystem.registerEngine(chessEngine);
 	}
 	
@@ -180,9 +195,13 @@ public class GameManager
 			processContainer.set(process);
 			engine.registerProcess(processContainer);
 
-			processContainer.get().startProcess();
+			try
+			{
+				processContainer.get().startProcess();
+			}
+			catch(Exception e) {throw new ProcessRunFailedException("Could not run chess engine: "+StringUtils.collectionToString(command," "),e);}
+			
 			engine.init();
-
 			return engine;
 		}
 		else
@@ -211,7 +230,6 @@ public class GameManager
 					}
 					line = reader.readLine();
 				}
-				chessEngineList = Collections.unmodifiableList(chessEngineList);
 			}
 			catch (IOException e)
 			{
@@ -229,6 +247,12 @@ public class GameManager
 	}
 
 
+	@SuppressWarnings("serial")
+	private static class ProcessRunFailedException extends RuntimeException
+	{
+		public ProcessRunFailedException(String message, Throwable cause) {super(message, cause);}
+	}
+	
 	protected final JFrame frame;
 	protected final BoardPanel boardPanel;
 	protected final Container<ChessEngineProcess> processContainer;
