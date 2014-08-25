@@ -33,7 +33,7 @@ public class StringUtils
 	 */
 	public static boolean anyStartsWith(Iterable<String> iterable, String str, Container<String> outputString)
 	{
-		outputString.set(null);
+		if (outputString!=null) {outputString.set(null);}
 		for (String inIterable : iterable)
 		{
 			if (startsWithIgnoreCase(str,inIterable))
