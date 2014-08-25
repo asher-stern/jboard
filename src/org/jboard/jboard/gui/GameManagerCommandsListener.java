@@ -34,16 +34,7 @@ public class GameManagerCommandsListener implements ActionListener
 		}
 		else if (e.getActionCommand().equals("select_engine"))
 		{
-			EngineSelectionDialog engineSelectionDialog = new EngineSelectionDialog(gameManager.getFrame(),gameManager);
-			engineSelectionDialog.setVisible(true);
-			if (engineSelectionDialog.isDonePressed())
-			{
-				gameManager.userSelectedEngine(engineSelectionDialog.getSelectedEngine());
-			}
-			else if (engineSelectionDialog.isJarSelected())
-			{
-				gameManager.userSelectedJarEngine(engineSelectionDialog.getSelectedJarFile());
-			}
+			selectEngine();
 		}
 		else if (e.getActionCommand().equals("configure"))
 		{
@@ -64,9 +55,20 @@ public class GameManagerCommandsListener implements ActionListener
 		
 		
 		gameManager.getBoardPanel().requestFocusInWindow();
-		
-
-
+	}
+	
+	public void selectEngine()
+	{
+		EngineSelectionDialog engineSelectionDialog = new EngineSelectionDialog(gameManager.getFrame(),gameManager);
+		engineSelectionDialog.setVisible(true);
+		if (engineSelectionDialog.isDonePressed())
+		{
+			gameManager.userSelectedEngine(engineSelectionDialog.getSelectedEngine());
+		}
+		else if (engineSelectionDialog.isJarSelected())
+		{
+			gameManager.userSelectedJarEngine(engineSelectionDialog.getSelectedJarFile());
+		}
 	}
 	
 	private final GameManager gameManager;

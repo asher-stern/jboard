@@ -40,7 +40,7 @@ public class EngineSelectionDialog extends JDialog implements ActionListener, It
 	
 	public EngineSelectionDialog(java.awt.Window ownerWindow,GameManager gameManager)
 	{
-		super(ownerWindow, Dialog.DEFAULT_MODALITY_TYPE);
+		super(ownerWindow,localized("choose_engine"), Dialog.DEFAULT_MODALITY_TYPE);
 		this.ownerWindow = ownerWindow;
 		this.gameManager = gameManager;
 		init();

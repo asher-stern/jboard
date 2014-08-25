@@ -123,6 +123,7 @@ public class Main
 		
 		mainFrame.applyComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
 		mainFrame.setVisible(true);
+		gameManagerCommandsListener.selectEngine();
 		boardPanel.requestFocusInWindow();
 
 	}
