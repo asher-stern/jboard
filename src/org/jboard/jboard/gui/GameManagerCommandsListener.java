@@ -3,7 +3,6 @@ package org.jboard.jboard.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.jboard.jboard.chessengine.ChessEngineConfiguration;
 import org.jboard.jboard.gui.board.BoardPanel;
 
 /**
@@ -27,6 +26,10 @@ public class GameManagerCommandsListener implements ActionListener
 	{
 		if (e.getActionCommand().equals("start"))
 		{
+			gameManager.startNewGameWithCurrentConfiguration();
+		}
+		else if (e.getActionCommand().equals("reset_and_start"))
+		{
 			gameManager.startNewGame();
 		}
 		else if (e.getActionCommand().equals("select_engine"))
@@ -42,16 +45,6 @@ public class GameManagerCommandsListener implements ActionListener
 				gameManager.userSelectedJarEngine(engineSelectionDialog.getSelectedJarFile());
 			}
 		}
-		else if (e.getActionCommand().equals("start_identical"))
-		{
-			ChessEngineConfiguration configuration = gameManager.getCurrentEngineConfiguration();
-			gameManager.startNewGame();
-			gameManager.configureEngine(configuration);
-		}
-		else if (e.getActionCommand().equals("flip_display"))
-		{
-			gameManager.getBoardPanel().setAppearsDown(gameManager.getBoardPanel().getAppearsDown().getOther());
-		}
 		else if (e.getActionCommand().equals("configure"))
 		{
 			ConfigurationDialog dialog = new ConfigurationDialog(gameManager.getFrame(),
@@ -62,6 +55,10 @@ public class GameManagerCommandsListener implements ActionListener
 			{
 				gameManager.configureEngine(dialog.createConfiguration());
 			}
+		}
+		else if (e.getActionCommand().equals("flip_display"))
+		{
+			gameManager.getBoardPanel().setAppearsDown(gameManager.getBoardPanel().getAppearsDown().getOther());
 		}
 		
 		

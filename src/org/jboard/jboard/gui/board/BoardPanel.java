@@ -66,6 +66,12 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		this.boardActivator = boardActivator;
 	}
 	
+	
+	public void setMoveEnabled(boolean moveEnabled)
+	{
+		this.moveEnabled = moveEnabled;
+	}
+
 	public void resetBoard()
 	{
 		boardStateList = new LinkedList<>();
@@ -90,45 +96,48 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		int keyCode = e.getKeyCode();
-		if ( (keyCode==KeyEvent.VK_KP_LEFT) || (keyCode==KeyEvent.VK_LEFT) )
+		if (moveEnabled)
 		{
-			moveMark(Direction.LEFT);
-		}
-		else if ( (keyCode==KeyEvent.VK_KP_RIGHT) || (keyCode==KeyEvent.VK_RIGHT) )
-		{
-			moveMark(Direction.RIGHT);
-		}
-		else if ( (keyCode==KeyEvent.VK_KP_UP) || (keyCode==KeyEvent.VK_UP) )
-		{
-			moveMark(Direction.UP);
-		}
-		else if ( (keyCode==KeyEvent.VK_KP_DOWN) || (keyCode==KeyEvent.VK_DOWN) )
-		{
-			moveMark(Direction.DOWN);
-		}
-		else if (keyCode==KeyEvent.VK_ENTER)
-		{
-			SquareCoordinates save_markChosen = markSource;
-			if (mark.equals(markSource))
+			int keyCode = e.getKeyCode();
+			if ( (keyCode==KeyEvent.VK_KP_LEFT) || (keyCode==KeyEvent.VK_LEFT) )
 			{
-				markSource=null;
+				moveMark(Direction.LEFT);
 			}
-			else if (markSource==null)
+			else if ( (keyCode==KeyEvent.VK_KP_RIGHT) || (keyCode==KeyEvent.VK_RIGHT) )
 			{
-				if (getActiveBoardState().getPositions().containsKey(mark))
+				moveMark(Direction.RIGHT);
+			}
+			else if ( (keyCode==KeyEvent.VK_KP_UP) || (keyCode==KeyEvent.VK_UP) )
+			{
+				moveMark(Direction.UP);
+			}
+			else if ( (keyCode==KeyEvent.VK_KP_DOWN) || (keyCode==KeyEvent.VK_DOWN) )
+			{
+				moveMark(Direction.DOWN);
+			}
+			else if (keyCode==KeyEvent.VK_ENTER)
+			{
+				SquareCoordinates save_markChosen = markSource;
+				if (mark.equals(markSource))
 				{
-					markSource=mark;	
+					markSource=null;
 				}
+				else if (markSource==null)
+				{
+					if (getActiveBoardState().getPositions().containsKey(mark))
+					{
+						markSource=mark;	
+					}
+				}
+				else
+				{
+					triggerMove(markSource,mark);
+					markSource = null;
+				}
+				if (save_markChosen!=null){repaintSquare(save_markChosen);}
+				if (markSource!=null){repaintSquare(markSource);}
+				repaintSquare(mark);
 			}
-			else
-			{
-				triggerMove(markSource,mark);
-				markSource = null;
-			}
-			if (save_markChosen!=null){repaintSquare(save_markChosen);}
-			if (markSource!=null){repaintSquare(markSource);}
-			repaintSquare(mark);
 		}
 	}
 	
@@ -240,14 +249,17 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	protected void paintComponent(Graphics graphics)
 	{
 		super.paintComponent(graphics);
-		
+
 		calculateBoardAndImageWidthAndHeight();
-		
+
 		paintSquares(graphics);
 		paintStandingPieces(graphics);
-		if (!(mark.equals(markSource))){paintMark(graphics,mark,Color.RED);}
-		if (markSource!=null) {paintMark(graphics,markSource,Color.BLUE);}
-		
+		if (moveEnabled)
+		{
+			if (!(mark.equals(markSource))){paintMark(graphics,mark,Color.RED);}
+			if (markSource!=null) {paintMark(graphics,markSource,Color.BLUE);}
+		}
+
 		
 		if (animatedMovingPieceImage!=null)
 		{
@@ -385,6 +397,7 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	protected final Images<BufferedImage> images;
 	
 	protected BoardActivator boardActivator;
+	protected boolean moveEnabled = true;
 
 	/**
 	 * Last element is current state

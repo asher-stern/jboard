@@ -81,6 +81,7 @@ public class Main
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(boardPanel,BorderLayout.CENTER);
 		addToolBar(mainPanel,gameManagerCommandsListener);
+		gameManager.setControlsManager(new ControlsManager(boardPanel, buttonStart, buttonResetAndStart));
 		mainFrame.setContentPane(mainPanel);
 
 		mainFrame.setFocusTraversalKeysEnabled(true);
@@ -129,6 +130,7 @@ public class Main
 	private void createBoardPanelAndProcess(JFrame frame, Images<BufferedImage> images)
 	{
 		boardPanel = new BoardPanel(frame, images);
+		boardPanel.setMoveEnabled(false);
 		Container<ChessEngineProcess> processContainer = new Container<ChessEngineProcess>(null);
 		
 		gameManager = new GameManager(frame, boardPanel, processContainer, images);
@@ -140,37 +142,42 @@ public class Main
 	{
 		JToolBar toolBar = new JToolBar();
 		
-		JButton buttonStart = new JButton(localized("start"));
+		buttonStart = new JButton(localized("start"));
+		buttonStart.setEnabled(false);
 		buttonStart.setActionCommand("start");
 		buttonStart.addActionListener(gameManagerCommandsListener);
 		toolBar.add(buttonStart);
+
+		buttonResetAndStart = new JButton(localized("reset_and_start"));
+		buttonResetAndStart.setEnabled(false);
+		buttonResetAndStart.setActionCommand("reset_and_start");
+		buttonResetAndStart.addActionListener(gameManagerCommandsListener);
+		toolBar.add(buttonResetAndStart);
 
 		JButton buttonSelectEngine = new JButton(localized("choose_engine"));
 		buttonSelectEngine.setActionCommand("select_engine");
 		buttonSelectEngine.addActionListener(gameManagerCommandsListener);
 		toolBar.add(buttonSelectEngine);
 
+		JButton buttonConfigure = new JButton(localized("configure_engine"));
+		buttonConfigure.setActionCommand("configure");
+		buttonConfigure.addActionListener(gameManagerCommandsListener);
+		toolBar.add(buttonConfigure);
 		
-		JButton buttonStartIdentical = new JButton(localized("start_identical"));
-		buttonStartIdentical.setActionCommand("start_identical");
-		buttonStartIdentical.addActionListener(gameManagerCommandsListener);
-		toolBar.add(buttonStartIdentical);
-
 		JButton buttonFlipDisplay = new JButton(localized("flip_display"));
 		buttonFlipDisplay.setActionCommand("flip_display");
 		buttonFlipDisplay.addActionListener(gameManagerCommandsListener);
 		toolBar.add(buttonFlipDisplay);
 
-		JButton buttonConfigure = new JButton(localized("configure_engine"));
-		buttonConfigure.setActionCommand("configure");
-		buttonConfigure.addActionListener(gameManagerCommandsListener);
-		toolBar.add(buttonConfigure);
 
 		mainPanel.add(toolBar, BorderLayout.PAGE_START);
 	}
 	
 	
-	
+
 	private BoardPanel boardPanel = null;
 	private GameManager gameManager = null;
+	
+	private JButton buttonStart;
+	private JButton buttonResetAndStart; 
 }

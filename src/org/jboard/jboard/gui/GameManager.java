@@ -1,5 +1,7 @@
 package org.jboard.jboard.gui;
 
+import static org.jboard.jboard.Constants.CHESS_ENGINE_LIST_FILE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,19 +13,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import org.jboard.jboard.bridge.ChessSystem;
 import org.jboard.jboard.chessengine.ChessEngine;
 import org.jboard.jboard.chessengine.ChessEngineConfiguration;
 import org.jboard.jboard.chessengine.ChessEngineProcess;
+import org.jboard.jboard.chessengine.DummyChessEngine;
 import org.jboard.jboard.chessengine.PipelinedChessEngine;
 import org.jboard.jboard.gui.board.BoardPanel;
 import org.jboard.jboard.utilities.Container;
 import org.jboard.jboard.utilities.JavaSystemUtilities;
-
-import static org.jboard.jboard.Constants.*;
-import static org.jboard.jboard.utilities.StringUtils.localized;
 
 /**
  * A focal point for all the components from which the program is composed.
@@ -48,8 +47,15 @@ public class GameManager
 		loadChessEngineList();
 	}
 	
-	
-	
+	public void setControlsManager(ControlsManager controlsManager)
+	{
+		this.controlsManager = controlsManager;
+	}
+
+
+
+
+
 	public List<String> getChessEngineList()
 	{
 		return chessEngineList;
@@ -69,6 +75,13 @@ public class GameManager
 		chessSystem.registerEngine(chessEngine);
 	}
 	
+	public void startNewGameWithCurrentConfiguration()
+	{
+		ChessEngineConfiguration configuration = getCurrentEngineConfiguration();
+		startNewGame();
+		configureEngine(configuration);
+	}
+	
 	public void configureEngine(ChessEngineConfiguration configuration)
 	{
 		if (boardPanel.getAppearsDown()!=configuration.getComputerColor().getOther())
@@ -83,24 +96,22 @@ public class GameManager
 	
 	public void userSelectedEngine(String engine)
 	{
-		boolean changed = !(selectedChessEngine.equals(engine));
 		selectedChessEngine = engine;
 		selectedJarChessEngine=null;
 		if (!(chessEngineList.contains(engine)))
 		{
 			chessEngineList.add(engine);
 		}
-		if (changed)
-		{
-			JOptionPane.showMessageDialog(frame, localized("selection_message"), localized("message"), JOptionPane.INFORMATION_MESSAGE);
-		}
+		if (controlsManager!=null) {controlsManager.enableAfterEngineSelected();}
+		startNewGameWithCurrentConfiguration();
 	}
 	
 	public void userSelectedJarEngine(File jarEngine)
 	{
 		selectedChessEngine=null;
 		selectedJarChessEngine=jarEngine;
-		JOptionPane.showMessageDialog(frame, localized("selection_message"), localized("message"), JOptionPane.INFORMATION_MESSAGE);
+		if (controlsManager!=null) {controlsManager.enableAfterEngineSelected();}
+		startNewGameWithCurrentConfiguration();
 	}
 	
 	public ChessEngineConfiguration getCurrentEngineConfiguration()
@@ -143,12 +154,9 @@ public class GameManager
 
 	private ChessEngine createChessEngine(ChessSystem chessSystem)
 	{
-		PipelinedChessEngine engine = new PipelinedChessEngine(chessSystem);
-		
 		List<String> command = null;
 		if (selectedJarChessEngine!=null)
 		{
-			
 			command = Arrays.asList(new String[]{JavaSystemUtilities.getJavaExecutable().getPath(),"-server","-Xmx512m","-jar",selectedJarChessEngine.getPath()});
 		}
 		else if (selectedChessEngine!=null)
@@ -157,19 +165,28 @@ public class GameManager
 		}
 		else
 		{
-			throw new RuntimeException("No engine selected.");
+			command = null;
 		}
 		
-		
-		
-		ChessEngineProcess process = new ChessEngineProcess(command,".",engine);
-		processContainer.set(process);
-		engine.registerProcess(processContainer);
+		if (command != null)
+		{
+			PipelinedChessEngine engine = new PipelinedChessEngine(chessSystem);
 
-		processContainer.get().startProcess();
-		engine.init();
+			ChessEngineProcess process = new ChessEngineProcess(command,".",engine);
+			processContainer.set(process);
+			engine.registerProcess(processContainer);
 
-		return engine;
+			processContainer.get().startProcess();
+			engine.init();
+
+			return engine;
+		}
+		else
+		{
+			DummyChessEngine engine = new DummyChessEngine();
+			engine.init();
+			return engine;
+		}
 	}
 
 	private void loadChessEngineList()
@@ -190,16 +207,9 @@ public class GameManager
 					}
 					line = reader.readLine();
 				}
-				if (chessEngineList.size()==0)
-				{
-					throw new RuntimeException("Chess engine list file is empty.");
-				}
-				else
-				{
-					selectedChessEngine = chessEngineList.iterator().next();
-					chessEngineList = Collections.unmodifiableList(chessEngineList);
-				}
-			} catch (IOException e)
+				chessEngineList = Collections.unmodifiableList(chessEngineList);
+			}
+			catch (IOException e)
 			{
 				throw new RuntimeException("Could not read chess engine list file.",e);
 			}
@@ -220,6 +230,8 @@ public class GameManager
 	protected final Container<ChessEngineProcess> processContainer;
 	protected final Images<?> images;
 
+	protected ControlsManager controlsManager = null;
+	
 	private String selectedChessEngine = null;
 	private File selectedJarChessEngine = null;
 	private List<String> chessEngineList = null;

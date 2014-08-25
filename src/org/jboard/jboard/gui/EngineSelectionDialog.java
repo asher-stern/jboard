@@ -1,5 +1,7 @@
 package org.jboard.jboard.gui;
 
+import static org.jboard.jboard.utilities.StringUtils.localized;
+
 import java.awt.ComponentOrientation;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -18,15 +20,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.filechooser.FileFilter;
 
 import org.jboard.jboard.utilities.FileUtilities;
 import org.jboard.jboard.utilities.GuiUtilities;
-
-import static org.jboard.jboard.utilities.StringUtils.*;
 
 /**
  * 
@@ -163,12 +162,11 @@ public class EngineSelectionDialog extends JDialog implements ActionListener, It
 		JPanel regularSelectPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		regularSelectPanel.setBorder(BorderFactory.createTitledBorder(localized("non_java_engine")));
 		
-		regularRadioButton = new JRadioButton();
+		regularRadioButton = new JRadioButton(localized("choose_regular_engine"));
 		regularRadioButton.setSelected(true);
 		radioSelectionGroup.add(regularRadioButton);
 		regularRadioButton.addItemListener(this);
 		regularSelectPanel.add(regularRadioButton);
-		regularSelectPanel.add(new JLabel(localized("choose_regular_engine")));
 		
 		Vector<String> chessEngineVector = new Vector<>(gameManager.getChessEngineList());
 		chessEngineComboBox = new JComboBox<>(chessEngineVector);
@@ -187,11 +185,10 @@ public class EngineSelectionDialog extends JDialog implements ActionListener, It
 		JPanel javaSelectPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		javaSelectPanel.setBorder(BorderFactory.createTitledBorder(localized("java_engine")));
 		
-		javaRadioButton = new JRadioButton();
+		javaRadioButton = new JRadioButton(localized("choose_java_engine"));
 		radioSelectionGroup.add(javaRadioButton);
 		javaRadioButton.addItemListener(this);
 		javaSelectPanel.add(javaRadioButton);
-		javaSelectPanel.add(new JLabel(localized("choose_java_engine")));
 		
 		jarFileChooserButton = new JButton(localized("select"));
 		jarFileChooserButton.setActionCommand("jar_file_chooser");
