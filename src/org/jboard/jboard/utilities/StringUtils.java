@@ -1,8 +1,14 @@
 package org.jboard.jboard.utilities;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.jboard.jboard.Constants;
 
 /**
  * Generic utilities for strings.
@@ -80,5 +86,35 @@ public class StringUtils
 		}
 		return sb.toString();
 	}
-
+	
+	public static String getVersion()
+	{
+		String version = "";
+		InputStream stream = null;
+		try
+		{
+			stream = StringUtils.class.getResourceAsStream(Constants.VERSION_RESOURCE_PATH);
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream)))
+			{
+				version = reader.readLine();
+				if (version==null)
+				{
+					version = "";
+				}
+				version = version.trim();
+			}
+		}
+		catch(Exception e)
+		{
+			version = "";
+		}
+		finally
+		{
+			if (stream!=null)
+			{
+				try{stream.close();} catch (IOException e) {}
+			}
+		}
+		return version;
+	}
 }

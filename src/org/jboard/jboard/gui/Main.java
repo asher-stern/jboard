@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 import org.jboard.jboard.chessengine.ChessEngineProcess;
 import org.jboard.jboard.gui.board.BoardPanel;
 import org.jboard.jboard.utilities.Container;
+import org.jboard.jboard.utilities.StringUtils;
 
 /**
  * Entry point of the program. Constructs all the game components, including the main frame
@@ -73,7 +74,8 @@ public class Main
 	
 	private void createAndShowGui(Images<BufferedImage> images)
 	{
-		final JFrame mainFrame = new JFrame("Jboard");
+		String version = StringUtils.getVersion();
+		final JFrame mainFrame = new JFrame("Jboard "+version);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createBoardPanelAndProcess(mainFrame,images);
 		GameManagerCommandsListener gameManagerCommandsListener = new GameManagerCommandsListener(gameManager); 

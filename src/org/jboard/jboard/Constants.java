@@ -9,6 +9,7 @@ package org.jboard.jboard;
  */
 public class Constants
 {
+	public static final String VERSION_RESOURCE_PATH = "/version.txt";
 	public static final String IMAGE_RESOURCE_PATH = "/free4.png";
 	public static final int BOARD_SIZE = 8;
 	public static final char FIRST_COLUMN = 'a';
