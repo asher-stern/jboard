@@ -17,6 +17,12 @@ import java.util.List;
  */
 public abstract class ProcessDoublePipeRunner
 {
+	/**
+	 * Constructs the process with the command line and working directory.
+	 * The process will start by calling {@link #startProcess()}.
+	 * @param command
+	 * @param directory
+	 */
 	public ProcessDoublePipeRunner(List<String> command, String directory)
 	{
 		super();
@@ -90,6 +96,13 @@ public abstract class ProcessDoublePipeRunner
 		processOutputLine(line);
 	}
 
+	
+	/**
+	 * A thread which processes the process output (the standard output of the
+	 * process), and sends them to the user of this process, by calling the
+	 * abstract method {@link ProcessDoublePipeRunner#processOutputLine(String)}.
+	 *
+	 */
 	private class OutputCollector implements Runnable
 	{
 		@Override

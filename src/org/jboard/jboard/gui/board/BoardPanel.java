@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.jboard.jboard.Constants;
+import org.jboard.jboard.bridge.ChessSystem;
 import org.jboard.jboard.chess.BoardState;
 import org.jboard.jboard.chess.BoardStateUtils;
 import org.jboard.jboard.chess.ChessRulesUtils;
@@ -60,20 +61,40 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		addKeyListener(this);
 		setFocusable(true);
 		this.images = images;
+		
+		// Initialize the list of board-states - the list will include only the starting state.
 		boardStateList.add(InitialStateFactory.getInitialBoardState());
 	}
 	
+	/**
+	 * Registers a {@link BoardActivator} into which commands from the user are sent.
+	 * This {@link BoardActivator} receives commands from the user, like performing a move.
+	 * These commands are then forwarded into the chess engine.
+	 * {@link BoardActivator} is typically implemented as the {@link ChessSystem}.
+	 * 
+	 * @param boardActivator a {@link BoardActivator} into which commands from the user are sent.
+	 */
 	public void registerActivator(BoardActivator boardActivator)
 	{
 		this.boardActivator = boardActivator;
 	}
 	
-	
+	/**
+	 * Sets whether the user can perform moves (moving a piece) on this board.
+	 * The common practice is that when the game did not yet start, and there
+	 * is no chess engine up and running, then the user would not be able
+	 * to move pieces on the board.
+	 * 
+	 * @param moveEnabled true/false indicate whether the user would be able to perform moves on this board.
+	 */
 	public void setMoveEnabled(boolean moveEnabled)
 	{
 		this.moveEnabled = moveEnabled;
 	}
 
+	/**
+	 * Resets the board to the initial state. The game can start now.
+	 */
 	public void resetBoard()
 	{
 		boardStateList = new LinkedList<>();
@@ -83,18 +104,36 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	}
 	
 
-	
+	/**
+	 * Returns the color which appears at the bottom of the board. The default
+	 * is that the white would be at the bottom (the bottom line is "1", the upper
+	 * line is "8"). When the user plays with the black pieces, then it is more
+	 * convenient that the black would appear at the bottom.
+	 * 
+	 * @return the color which appears at the bottom.
+	 */
 	public WhiteBlack getAppearsDown()
 	{
 		return appearsDown;
 	}
 
+	/**
+	 * Sets which color would appear at the bottom of the board.
+	 * White - means that the bottom line is "1". Black means that the bottom
+	 * line is "8".
+	 * 
+	 * @param appearsDown the color that would appear at the bottom of the board.
+	 */
 	public void setAppearsDown(WhiteBlack appearsDown)
 	{
 		this.appearsDown = appearsDown;
 		repaint();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
@@ -149,6 +188,10 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	public void keyReleased(KeyEvent e){}
 
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.jboard.jboard.gui.board.BoardResponder#movePerformed(org.jboard.jboard.chess.Move)
+	 */
 	@Override
 	public void movePerformed(Move move)
 	{
@@ -158,6 +201,10 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	
 	
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.jboard.jboard.gui.board.BoardResponder#cancelLastMove()
+	 */
 	@Override
 	public void cancelLastMove()
 	{
@@ -170,13 +217,25 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	
 	
 
-	
+	/**
+	 * Called when either the user or the engine (the computer) performed a move,
+	 * and displays an animation of the piece moving from its source position
+	 * to its destination.
+	 * <BR>
+	 * If this method was called to display the move performed by the engine
+	 * (the computer), then the member field {@link #nowAnimatedEngineMove}
+	 * would hold the engine's move. Otherwise, it would be null.
+	 * 
+	 * @param source
+	 * @param destination
+	 */
 	protected void triggerMove(SquareCoordinates source, SquareCoordinates destination)
 	{
-		if (null==animatedMovingPieceImage)
+		if (null==animatedMovingPieceImage) // nothing is moving at this very moment.
 		{
 			if ( (source!=null) && (destination!=null) )
 			{
+				// Start a thread that would move a piece on the board.
 				Thread animationThread = new Thread(new AnimationRunnable(source, destination));
 				animationThread.start();
 			}
@@ -185,6 +244,16 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		}
 	}
 	
+	/**
+	 * Called after the animation has finished, and adds a new {@link BoardState}
+	 * to the list of board states, which reflects the board after the move
+	 * has been performed.
+	 * <BR>
+	 * This method is called only for user's move, not for engine's move.
+	 * 
+	 * @param source The original position of the moving piece. 
+	 * @param destination The destimation of the moving piece.
+	 */
 	protected void continueTriggerMove(SquareCoordinates source, SquareCoordinates destination)
 	{
 		ColoredPiece piece = getActiveBoardState().getPositions().get(source);
@@ -202,6 +271,12 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		}
 	}
 	
+	/**
+	 * Adds a new {@link BoardState} to the list of board states, which reflects
+	 * the board after the move has been performed.
+	 * 
+	 * @param move an object represents a move.
+	 */
 	protected void performMove(Move move)
 	{
 		BoardState stateAfterMove = BoardStateUtils.performMove(boardStateList.getLast(), move);
@@ -210,6 +285,11 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		boardActivator.makeMove(move);
 	}
 	
+	/**
+	 * Called after the animation which displayed the move performed by
+	 * the engine has been finished, and updates the board to reflect
+	 * the new board-state after that move.
+	 */
 	protected void continueEngineMoveAfterAnimation()
 	{
 		Move move = nowAnimatedEngineMove;
@@ -220,13 +300,22 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	}
 
 	
-	
+	/**
+	 * Repaints a rectangle of this {@link BoardPanel} which displays
+	 * the given square.
+	 * @param square
+	 */
 	protected void repaintSquare(SquareCoordinates square)
 	{
 		SquareArea area = areaOfSquare(square);
 		repaint(area.getxStart(),area.getyStart(),imageActualWidth,imageActualHeight);
 	}
 	
+	/**
+	 * In response to the user pressing on the arrow keys, this method
+	 * moves the colored rectangle to another square on the board.
+	 * @param direction
+	 */
 	protected void moveMark(Direction direction)
 	{
 		repaintSquare(mark);
@@ -246,7 +335,10 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	}
 
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+	 */
 	@Override
 	protected void paintComponent(Graphics graphics)
 	{

@@ -87,6 +87,11 @@ public class StringUtils
 		return sb.toString();
 	}
 	
+	
+	/**
+	 * Returns jboard version.
+	 * @return jboard version.
+	 */
 	public static String getVersion()
 	{
 		String version = "";

@@ -12,7 +12,16 @@ import org.jboard.jboard.chess.Move;
  */
 public interface BoardResponder
 {
+	/**
+	 * The engine (the computer) performed a move. This should then be reflected
+	 * in the board presented to the user.
+	 * @param move
+	 */
 	public void movePerformed(Move move);
 	
+	/**
+	 * A directive to the board to cancel the last move that has been performed
+	 * by the user. This is typically requested when that last move was an illegal move.
+	 */
 	public void cancelLastMove();
 }
