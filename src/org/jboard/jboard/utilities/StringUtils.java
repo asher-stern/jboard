@@ -65,8 +65,9 @@ public class StringUtils
 	
 	/**
 	 * Returns a localized string for the given key.
-	 * @param str
-	 * @return
+	 * @param str a key, which will be searched for in the jboard.properties file and
+	 * jboard_XX.properties file (XX stands for language key).
+	 * @return The string to be displayed to the user.
 	 */
 	public static String localized(String str)
 	{

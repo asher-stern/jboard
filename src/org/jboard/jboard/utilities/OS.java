@@ -71,7 +71,7 @@ public class OS
 	
 	
 	
-	//////////////////private part  ////////////////////////////
+	////////////////// private part  ////////////////////////////
 	
 	// constants
 	private static final String WINDOWS_PROGRAM_NAME_EXTENSION = ".exe";
