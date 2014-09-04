@@ -26,6 +26,11 @@ import org.jboard.jboard.utilities.StringUtils;
 @SuppressWarnings("serial")
 public class ExceptionMessageBox extends JDialog
 {
+	public static final int DEFAULT_WIDTH = 500;
+	public static final int WIDTH_SLACK = 30;
+	public static final int DEFAULT_HEIGHT = 200;
+	public static final int DEFAULT_DETAILS_HEIGHT = 200;
+	
 	public ExceptionMessageBox(Window window, Exception exception)
 	{
 		super(window,StringUtils.localized("error"),Dialog.DEFAULT_MODALITY_TYPE);
@@ -44,8 +49,13 @@ public class ExceptionMessageBox extends JDialog
 		JTextArea textArea = new JTextArea(exception.getMessage());
 		mainPanel.add(textArea);
 		
+		detailsArea.setText(StringUtils.getStackTrace(exception));
+		
+		
 		JLabel label = new JLabel("+ "+StringUtils.localized("details"));
-		label.addMouseListener(new MouseAdapter()
+		JPanel labelPanel = new JPanel();
+		labelPanel.add(label);
+		labelPanel.addMouseListener(new MouseAdapter()
 		{
 			@Override
 			public void mouseClicked(MouseEvent e)
@@ -54,22 +64,30 @@ public class ExceptionMessageBox extends JDialog
 				{
 					label.setText("- "+StringUtils.localized("details"));
 					mainPanel.add(detailsArea);
-					mainPanel.setSize(getWidth(), getHeight()+detailsArea.getHeight());
+					setSize(getWidth(), getHeight()+DEFAULT_DETAILS_HEIGHT);
 				}
 				else
 				{
-					label.setText("- "+StringUtils.localized("details"));
+					label.setText("+ "+StringUtils.localized("details"));
 					mainPanel.remove(detailsArea);
-					mainPanel.setSize(getWidth(), getHeight()-detailsArea.getHeight());
+					setSize(getWidth(), getHeight()-DEFAULT_DETAILS_HEIGHT);
 				}
+				detailsShown=!detailsShown;
 			}
 		});
-		mainPanel.add(label);
+		
+		
+		mainPanel.add(labelPanel);
 		
 		setContentPane(mainPanel);
 		
 		applyComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
-		pack();
+		int width = DEFAULT_WIDTH;
+		if (window!=null)
+		{
+			width = Math.max( width, (window.getWidth()-WIDTH_SLACK) );
+		}
+		setSize(width, DEFAULT_HEIGHT);
 		if (window!=null)
 		{
 			GuiUtilities.centerDialog(window, this);
@@ -82,4 +100,36 @@ public class ExceptionMessageBox extends JDialog
 	
 	private JTextArea detailsArea = new JTextArea();
 	private boolean detailsShown = false;
+	
+	
+//	public static void main(String[] args)
+//	{
+//		SwingUtilities.invokeLater(new Runnable()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				JFrame frame = new JFrame();
+//				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//				JPanel panel = new JPanel();
+//				panel.add(new JLabel("Hello world"));
+//				JButton button = new JButton("Dispaly");
+//				button.addActionListener(new ActionListener()
+//				{
+//					
+//					@Override
+//					public void actionPerformed(ActionEvent e)
+//					{
+//						ExceptionMessageBox emb = new ExceptionMessageBox(frame, new RuntimeException("hello"));
+//						
+//					}
+//				});
+//				panel.add(button);
+//				frame.setContentPane(panel);
+//				frame.pack();
+//				frame.setVisible(true);
+//				
+//			}
+//		});
+//	}
 }

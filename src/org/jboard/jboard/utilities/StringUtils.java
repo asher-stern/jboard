@@ -123,4 +123,19 @@ public class StringUtils
 		}
 		return version;
 	}
+	
+	public static String getStackTrace(Throwable t)
+	{
+		StringBuilder sb = new StringBuilder();
+		StackTraceElement[] stackTraceElements = t.getStackTrace();
+		
+		boolean firstIteration = true;
+		for (StackTraceElement element : stackTraceElements)
+		{
+			if (firstIteration) {firstIteration=false;}
+			else {sb.append("\n");}
+			sb.append(element.toString());
+		}
+		return sb.toString();
+	}
 }
