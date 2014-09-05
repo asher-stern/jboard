@@ -24,4 +24,5 @@ public interface ChessResponder
 	public void drawOffered();
 	
 	public void drawAccepted();
+	
 }

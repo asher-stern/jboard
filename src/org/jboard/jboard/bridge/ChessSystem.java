@@ -1,10 +1,17 @@
 package org.jboard.jboard.bridge;
 
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.jboard.jboard.chess.BoardState;
+import org.jboard.jboard.chess.BoardStateUtils;
+import org.jboard.jboard.chess.InitialStateFactory;
 import org.jboard.jboard.chess.Move;
 import org.jboard.jboard.chess.Piece;
 import org.jboard.jboard.chess.WhiteBlack;
@@ -15,6 +22,7 @@ import org.jboard.jboard.chessengine.PipelinedChessEngine;
 import org.jboard.jboard.gui.Images;
 import org.jboard.jboard.gui.board.BoardPanel;
 import org.jboard.jboard.gui.board.BoardResponder;
+
 import static org.jboard.jboard.utilities.StringUtils.localized;
 
 /**
@@ -40,6 +48,10 @@ public class ChessSystem implements ChessActivator, ChessResponder
 		this.boardResponder = boardResponder;
 		this.mainFrame = mainFrame;
 		this.images = images;
+		
+		BoardState initialBoardState = InitialStateFactory.getInitialBoardState();
+		boardStateList.add(initialBoardState);
+		this.boardResponder.setState(initialBoardState);
 	}
 	
 	public void registerEngine(ChessEngine engine)
@@ -51,6 +63,7 @@ public class ChessSystem implements ChessActivator, ChessResponder
 	@Override
 	public void makeMove(Move move)
 	{
+		boardStateList.add(BoardStateUtils.performMove(boardStateList.getLast(), move));
 		engine.sendCommand(new MoveCommand(move));
 	}
 
@@ -82,6 +95,7 @@ public class ChessSystem implements ChessActivator, ChessResponder
 	@Override
 	public void movePerformed(Move move)
 	{
+		boardStateList.add(BoardStateUtils.performMove(boardStateList.getLast(), move));
 		boardResponder.movePerformed(move);
 	}
 
@@ -89,7 +103,12 @@ public class ChessSystem implements ChessActivator, ChessResponder
 	public void lastMoveRegected(String comment)
 	{
 		JOptionPane.showMessageDialog(mainFrame, comment, localized("illegal_move"), JOptionPane.ERROR_MESSAGE);
-		boardResponder.cancelLastMove();
+		
+		if (boardStateList.size()>1)
+		{
+			boardStateList.removeLast();
+			boardResponder.setState(boardStateList.getLast());
+		}
 	}
 
 	@Override
@@ -120,6 +139,13 @@ public class ChessSystem implements ChessActivator, ChessResponder
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public List<BoardState> getBoardStateList()
+	{
+		return Collections.unmodifiableList(boardStateList);
+	}
+
+
 
 
 
@@ -129,6 +155,11 @@ public class ChessSystem implements ChessActivator, ChessResponder
 	protected final java.awt.Window mainFrame;
 	protected final Images<?> images;
 	protected ChessEngine engine;
-	
+
+	/**
+	 * Last element is current state
+	 */
+	protected LinkedList<BoardState> boardStateList = new LinkedList<>();
+
 
 }

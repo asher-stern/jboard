@@ -1,5 +1,6 @@
 package org.jboard.jboard.gui.board;
 
+import org.jboard.jboard.chess.BoardState;
 import org.jboard.jboard.chess.Move;
 
 /**
@@ -19,9 +20,16 @@ public interface BoardResponder
 	 */
 	public void movePerformed(Move move);
 	
+//	/**
+//	 * A directive to the board to cancel the last move that has been performed
+//	 * by the user. This is typically requested when that last move was an illegal move.
+//	 */
+//	public void cancelLastMove();
+	
+	
 	/**
-	 * A directive to the board to cancel the last move that has been performed
-	 * by the user. This is typically requested when that last move was an illegal move.
+	 * Sets a {@link BoardState} to be displayed in the {@link BoardPanel}
+	 * @param boardState
 	 */
-	public void cancelLastMove();
+	public void setState(BoardState boardState);
 }

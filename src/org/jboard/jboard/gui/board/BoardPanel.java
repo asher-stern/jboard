@@ -11,7 +11,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -62,8 +61,7 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		setFocusable(true);
 		this.images = images;
 		
-		// Initialize the list of board-states - the list will include only the starting state.
-		boardStateList.add(InitialStateFactory.getInitialBoardState());
+		currentBoardState = InitialStateFactory.getInitialBoardState();
 	}
 	
 	/**
@@ -92,16 +90,16 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		this.moveEnabled = moveEnabled;
 	}
 
-	/**
-	 * Resets the board to the initial state. The game can start now.
-	 */
-	public void resetBoard()
-	{
-		boardStateList = new LinkedList<>();
-		boardStateList.add(InitialStateFactory.getInitialBoardState());
-		setAppearsDown(WhiteBlack.WHITE);
-		repaint();
-	}
+//	/**
+//	 * Resets the board to the initial state. The game can start now.
+//	 */
+//	public void resetBoard()
+//	{
+//		boardStateList = new LinkedList<>();
+//		boardStateList.add(InitialStateFactory.getInitialBoardState());
+//		setAppearsDown(WhiteBlack.WHITE);
+//		repaint();
+//	}
 	
 
 	/**
@@ -203,16 +201,12 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jboard.jboard.gui.board.BoardResponder#cancelLastMove()
+	 * @see org.jboard.jboard.gui.board.BoardResponder#setState(org.jboard.jboard.chess.BoardState)
 	 */
-	@Override
-	public void cancelLastMove()
+	public void setState(BoardState boardState)
 	{
-		if (boardStateList.size()>1)
-		{
-			boardStateList.removeLast();
-			repaint();
-		}
+		currentBoardState = boardState;
+		repaint();
 	}
 	
 	
@@ -279,8 +273,8 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	 */
 	protected void performMove(Move move)
 	{
-		BoardState stateAfterMove = BoardStateUtils.performMove(boardStateList.getLast(), move);
-		boardStateList.add(stateAfterMove);
+		BoardState stateAfterMove = BoardStateUtils.performMove(currentBoardState, move);
+		currentBoardState = stateAfterMove;
 		repaint();
 		boardActivator.makeMove(move);
 	}
@@ -294,8 +288,8 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	{
 		Move move = nowAnimatedEngineMove;
 		nowAnimatedEngineMove = null;
-		BoardState stateAfterMove = BoardStateUtils.performMove(boardStateList.getLast(), move);
-		boardStateList.add(stateAfterMove);
+		BoardState stateAfterMove = BoardStateUtils.performMove(currentBoardState, move);
+		currentBoardState = stateAfterMove;
 		repaint();
 	}
 
@@ -447,7 +441,7 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		}
 		else
 		{
-			return boardStateList.getLast();
+			return currentBoardState;
 		}
 	}
 	
@@ -493,10 +487,7 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	protected BoardActivator boardActivator;
 	protected boolean moveEnabled = true;
 
-	/**
-	 * Last element is current state
-	 */
-	protected LinkedList<BoardState> boardStateList = new LinkedList<>();
+	protected BoardState currentBoardState;
 
 	protected int boardWidth = 1;
 	protected int boardHeight = 1;

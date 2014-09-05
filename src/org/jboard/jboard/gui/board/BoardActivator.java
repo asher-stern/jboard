@@ -13,5 +13,9 @@ import org.jboard.jboard.chess.Move;
  */
 public interface BoardActivator
 {
+	/**
+	 * The user made his/her move. Forward this information to the chess engine.
+	 * @param move
+	 */
 	public void makeMove(Move move);
 }

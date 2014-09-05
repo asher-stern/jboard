@@ -74,12 +74,12 @@ public class GameManager
 	public void startNewGame()
 	{
 		tryToShutDownProcess();
-		boardPanel.resetBoard();
-		
-		ChessSystem chessSystem = new ChessSystem(boardPanel,frame, images);
+		//boardPanel.resetBoard();
+
+		chessSystem = new ChessSystem(boardPanel,frame, images);
 		try
 		{
-		chessEngine = createChessEngine(chessSystem);
+			chessEngine = createChessEngine(chessSystem);
 		}
 		catch(ProcessRunFailedException e)
 		{
@@ -87,9 +87,8 @@ public class GameManager
 			JOptionPane.showMessageDialog(frame, localized("failed_run_process")+"\n"+exceptionMessage, localized("failed_run_process"), JOptionPane.ERROR_MESSAGE);
 			chessEngine = new DummyChessEngine();
 			chessEngine.init();
-
 		}
-		
+
 		boardPanel.registerActivator(chessSystem);
 		chessSystem.registerEngine(chessEngine);
 	}
@@ -264,5 +263,6 @@ public class GameManager
 	private File selectedJarChessEngine = null;
 	private List<String> chessEngineList = null;
 	
+	protected ChessSystem chessSystem;
 	protected ChessEngine chessEngine = null;
 }
