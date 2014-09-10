@@ -70,6 +70,12 @@ public class BoardState
 
 
 	private final Map<SquareCoordinates, ColoredPiece> positions;
+	
+	/**
+	 * inPassing is a square, which is empty, but in case a pawn tries to capture a piece in this
+	 * square the square is treated as if a pawn is standing in it.
+	 * For example: for the move e2e4, e3 is an inPassing square.
+	 */
 	private final SquareCoordinates inPassing; // may be null
 	private final boolean whiteKingAlreadyMoved;
 	private final boolean whiteRookInRowA_AlreadyMoved;

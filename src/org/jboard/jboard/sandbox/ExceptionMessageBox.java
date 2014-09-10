@@ -1,4 +1,4 @@
-package org.jboard.jboard.gui;
+package org.jboard.jboard.sandbox;
 
 import java.awt.ComponentOrientation;
 import java.awt.Dialog;
