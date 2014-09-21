@@ -62,11 +62,11 @@ public class BoardStateUtils
 		}
 		
 		boolean whiteKingAlreadyMoved = state.isWhiteKingAlreadyMoved() || WHITE_KING_SQUARE.equals(move.getSource()); 
-		boolean whiteRookInRowA_AlreadyMoved = state.isWhiteRookInRowA_AlreadyMoved() || WHITE_ROOK_A_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&WHITE_ROOK_A_SQUARE.equals(rookCastlingMove.getSource()));
-		boolean whiteRookInRowH_AlreadyMoved = state.isWhiteRookInRowH_AlreadyMoved() || WHITE_ROOK_H_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&WHITE_ROOK_H_SQUARE.equals(rookCastlingMove.getSource()));
+		boolean whiteRookInRowA_AlreadyMoved = state.isWhiteRookInColumnA_AlreadyMoved() || WHITE_ROOK_A_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&WHITE_ROOK_A_SQUARE.equals(rookCastlingMove.getSource()));
+		boolean whiteRookInRowH_AlreadyMoved = state.isWhiteRookInColumnH_AlreadyMoved() || WHITE_ROOK_H_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&WHITE_ROOK_H_SQUARE.equals(rookCastlingMove.getSource()));
 		boolean blackKingAlreadyMoved = state.isBlackKingAlreadyMoved() || BLACK_KING_SQUARE.equals(move.getSource());
-		boolean blackRookInRowA_AlreadyMoved = state.isBlackRookInRowA_AlreadyMoved() || BLACK_ROOK_A_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&BLACK_ROOK_A_SQUARE.equals(rookCastlingMove.getSource()));
-		boolean blackRookInRowH_AlreadyMoved = state.isBlackRookInRowH_AlreadyMoved() || BLACK_ROOK_H_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&BLACK_ROOK_H_SQUARE.equals(rookCastlingMove.getSource()));
+		boolean blackRookInRowA_AlreadyMoved = state.isBlackRookInColumnA_AlreadyMoved() || BLACK_ROOK_A_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&BLACK_ROOK_A_SQUARE.equals(rookCastlingMove.getSource()));
+		boolean blackRookInRowH_AlreadyMoved = state.isBlackRookInColumnH_AlreadyMoved() || BLACK_ROOK_H_SQUARE.equals(move.getSource()) || ((rookCastlingMove!=null)&&BLACK_ROOK_H_SQUARE.equals(rookCastlingMove.getSource()));
 		
 		
 		return new BoardState(positions,inPassing,
@@ -92,11 +92,11 @@ public class BoardStateUtils
 		}
 		return new BoardState(positions,
 				state.getInPassing(), state.isWhiteKingAlreadyMoved(),
-				state.isWhiteRookInRowA_AlreadyMoved(),
-				state.isWhiteRookInRowH_AlreadyMoved(),
+				state.isWhiteRookInColumnA_AlreadyMoved(),
+				state.isWhiteRookInColumnH_AlreadyMoved(),
 				state.isBlackKingAlreadyMoved(),
-				state.isBlackRookInRowA_AlreadyMoved(),
-				state.isBlackRookInRowH_AlreadyMoved());
+				state.isBlackRookInColumnA_AlreadyMoved(),
+				state.isBlackRookInColumnH_AlreadyMoved());
 	}
 	
 

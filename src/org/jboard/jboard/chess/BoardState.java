@@ -25,11 +25,11 @@ public class BoardState
 		this.positions = positions;
 		this.inPassing = inPassing;
 		this.whiteKingAlreadyMoved = whiteKingAlreadyMoved;
-		this.whiteRookInRowA_AlreadyMoved = whiteRookInRowA_AlreadyMoved;
-		this.whiteRookInRowH_AlreadyMoved = whiteRookInRowH_AlreadyMoved;
+		this.whiteRookInColumnA_AlreadyMoved = whiteRookInRowA_AlreadyMoved;
+		this.whiteRookInColumnH_AlreadyMoved = whiteRookInRowH_AlreadyMoved;
 		this.blackKingAlreadyMoved = blackKingAlreadyMoved;
-		this.blackRookInRowA_AlreadyMoved = blackRookInRowA_AlreadyMoved;
-		this.blackRookInRowH_AlreadyMoved = blackRookInRowH_AlreadyMoved;
+		this.blackRookInColumnA_AlreadyMoved = blackRookInRowA_AlreadyMoved;
+		this.blackRookInColumnH_AlreadyMoved = blackRookInRowH_AlreadyMoved;
 	}
 	
 	
@@ -46,25 +46,25 @@ public class BoardState
 	{
 		return whiteKingAlreadyMoved;
 	}
-	public boolean isWhiteRookInRowA_AlreadyMoved()
+	public boolean isWhiteRookInColumnA_AlreadyMoved()
 	{
-		return whiteRookInRowA_AlreadyMoved;
+		return whiteRookInColumnA_AlreadyMoved;
 	}
-	public boolean isWhiteRookInRowH_AlreadyMoved()
+	public boolean isWhiteRookInColumnH_AlreadyMoved()
 	{
-		return whiteRookInRowH_AlreadyMoved;
+		return whiteRookInColumnH_AlreadyMoved;
 	}
 	public boolean isBlackKingAlreadyMoved()
 	{
 		return blackKingAlreadyMoved;
 	}
-	public boolean isBlackRookInRowA_AlreadyMoved()
+	public boolean isBlackRookInColumnA_AlreadyMoved()
 	{
-		return blackRookInRowA_AlreadyMoved;
+		return blackRookInColumnA_AlreadyMoved;
 	}
-	public boolean isBlackRookInRowH_AlreadyMoved()
+	public boolean isBlackRookInColumnH_AlreadyMoved()
 	{
-		return blackRookInRowH_AlreadyMoved;
+		return blackRookInColumnH_AlreadyMoved;
 	}
 
 
@@ -78,10 +78,10 @@ public class BoardState
 	 */
 	private final SquareCoordinates inPassing; // may be null
 	private final boolean whiteKingAlreadyMoved;
-	private final boolean whiteRookInRowA_AlreadyMoved;
-	private final boolean whiteRookInRowH_AlreadyMoved;
+	private final boolean whiteRookInColumnA_AlreadyMoved;
+	private final boolean whiteRookInColumnH_AlreadyMoved;
 	private final boolean blackKingAlreadyMoved;
-	private final boolean blackRookInRowA_AlreadyMoved;
-	private final boolean blackRookInRowH_AlreadyMoved;
+	private final boolean blackRookInColumnA_AlreadyMoved;
+	private final boolean blackRookInColumnH_AlreadyMoved;
 	
 }
