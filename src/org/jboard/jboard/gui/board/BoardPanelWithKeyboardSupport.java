@@ -192,6 +192,8 @@ public class BoardPanelWithKeyboardSupport extends BoardPanel implements KeyList
 
 		if (currentBoardState.getPositions().containsKey(mark))
 		{
+			// Calculate all moves the can be performed from the marked square.
+			// Make this calculation in a separate thread, such that the GUI will not be frozen during this calculation.
 			new Thread(
 					new Runnable()
 					{
@@ -221,7 +223,6 @@ public class BoardPanelWithKeyboardSupport extends BoardPanel implements KeyList
 							{
 								potentialDestinations = null;
 							}
-							System.out.println("activatePotentialDestinations(): Thread ended.");
 						}
 					}).start();
 		}
