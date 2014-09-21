@@ -49,6 +49,16 @@ public class PawnPlayOneStep extends PlayOneStep
 			destinationCandidates.add(ahead);
 		}
 		
+		int firstPawnRow = color==WhiteBlack.WHITE?1+1:BOARD_SIZE-1;
+		if (origin.getRow()==firstPawnRow)
+		{
+			SquareCoordinates jumpAhead = new SquareCoordinates(origin.getColumn(), origin.getRow()+2*addToRow);
+			if ( (!(board.getPositions().containsKey(ahead))) && (!(board.getPositions().containsKey(jumpAhead))) )
+			{
+				destinationCandidates.add(jumpAhead);
+			}
+		}
+		
 		List<SquareCoordinates> captureCandidates = new LinkedList<SquareCoordinates>();
 		if (origin.getColumn()>'a')
 		{
@@ -79,10 +89,6 @@ public class PawnPlayOneStep extends PlayOneStep
 		{
 			if (destinationCandidate.getRowAsZeroStartingCoordinate()==lastRowZeroStarting) // promotion
 			{
-				ret.add(new Move(origin, destinationCandidate, null));
-			}
-			else
-			{
 				for (Piece promotionCandidate : Piece.values())
 				{
 					if (promotionCandidate.isValidForPromotion())
@@ -91,7 +97,10 @@ public class PawnPlayOneStep extends PlayOneStep
 					}
 				}
 			}
-
+			else
+			{
+				ret.add(new Move(origin, destinationCandidate, null));
+			}
 		}
 
 		
