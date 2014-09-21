@@ -90,6 +90,19 @@ public class BoardStateUtils
 		{
 			positions.remove(squareToRemove);
 		}
+		return temporarilyChangePositionsOnly(state,positions);
+	}
+
+	
+	/**
+	 * Adds or removes or replaces the pieces on the board, but without changing any other "meta information".
+	 * Note that this board is not a valid board.
+	 * @param state
+	 * @param positions
+	 * @return
+	 */
+	public static BoardState temporarilyChangePositionsOnly(BoardState state, Map<SquareCoordinates, ColoredPiece> positions)
+	{
 		return new BoardState(positions,
 				state.getInPassing(), state.isWhiteKingAlreadyMoved(),
 				state.isWhiteRookInColumnA_AlreadyMoved(),
@@ -97,6 +110,7 @@ public class BoardStateUtils
 				state.isBlackKingAlreadyMoved(),
 				state.isBlackRookInColumnA_AlreadyMoved(),
 				state.isBlackRookInColumnH_AlreadyMoved());
+		
 	}
 	
 

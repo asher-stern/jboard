@@ -1,10 +1,16 @@
 package org.jboard.jboard.chess.play;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboard.jboard.chess.BoardState;
+import org.jboard.jboard.chess.BoardStateUtils;
+import org.jboard.jboard.chess.ColoredPiece;
 import org.jboard.jboard.chess.Move;
+import org.jboard.jboard.chess.Piece;
 import org.jboard.jboard.chess.SquareCoordinates;
 import org.jboard.jboard.chess.WhiteBlack;
 
@@ -34,7 +40,6 @@ public class KingPlayOneStep extends PlayOneStep
 	public List<Move> calculateAllMoves()
 	{
 		moves = new LinkedList<Move>();
-		opponentMoves = null;
 		
 		WhiteBlack myColor = board.getPositions().get(origin).getColor();
 		
@@ -80,13 +85,15 @@ public class KingPlayOneStep extends PlayOneStep
 			{
 				SquareCoordinates rookCoordinates = new SquareCoordinates('a', origin.getRow());
 				List<SquareCoordinates> way = getSquaresInWay(origin,rookCoordinates);
-				if (checkNotThreatened(myColor, way))
+				if (checkEmpty(way))
 				{
-					moves.add(new Move(origin, 
-							new SquareCoordinates((char) (origin.getColumn()-2), origin.getRow()),
-							null));
-					
-				}
+					if (checkNotThreatened(myColor, way))
+					{
+						moves.add(new Move(origin, 
+								new SquareCoordinates((char) (origin.getColumn()-2), origin.getRow()),
+								null));
+
+					}}
 			}
 			
 			// rook at h
@@ -97,17 +104,20 @@ public class KingPlayOneStep extends PlayOneStep
 			{
 				SquareCoordinates rookCoordinates = new SquareCoordinates((char)('a'+BOARD_SIZE-1), origin.getRow());
 				List<SquareCoordinates> way = getSquaresInWay(origin,rookCoordinates);
-				if (checkNotThreatened(myColor, way))
+				if (checkEmpty(way))
 				{
-					moves.add(new Move(origin, 
-							new SquareCoordinates((char) (origin.getColumn()+2), origin.getRow()),
-							null));
-					
+					if (checkNotThreatened(myColor, way))
+					{
+						moves.add(new Move(origin, 
+								new SquareCoordinates((char) (origin.getColumn()+2), origin.getRow()),
+								null));
+
+					}
 				}
 			}
-			
+
 		}
-		
+
 	}
 	
 	private List<SquareCoordinates> getSquaresInWay(SquareCoordinates kingCoordinates, SquareCoordinates rookCoordinates)
@@ -134,15 +144,44 @@ public class KingPlayOneStep extends PlayOneStep
 		return ret;
 	}
 	
+	private boolean checkEmpty(List<SquareCoordinates> way)
+	{
+		
+		Iterator<SquareCoordinates> iterator = way.iterator();
+		if (iterator.hasNext())
+		{
+			iterator.next(); // The first square is occupied by the king or the rook. Go to the next one.
+			
+			boolean occupiedDetected = false;
+			while (iterator.hasNext())
+			{
+				SquareCoordinates square = iterator.next();
+				if (board.getPositions().containsKey(square)) // Is a square along the way occupied?
+				{
+					occupiedDetected=true;
+					break;
+				}
+			}
+			if (occupiedDetected) // we must arrive here, since the end is occupied by the king or the rook. The question is whether we arrived here before the end of the way.
+			{
+				if (iterator.hasNext()) // Was the occupied square in the middle of the way?
+				{
+					return false;
+				}
+			}
+		}
+		// The occupied square was at the edge of the way (king or rook)
+		return true;
+	}
+	
 	private boolean checkNotThreatened(WhiteBlack myColor, List<SquareCoordinates> squares)
 	{
-		if (null==opponentMoves)
-		{
-			AllMovesCalculator allMovesCalculator = new AllMovesCalculator(board,myColor.getOther());
-			allMovesCalculator.excludeCastling();
-			opponentMoves = allMovesCalculator.calculateAllMoves();
-		}
 		
+		AllMovesCalculator allMovesCalculator = new AllMovesCalculator(createBoardStateWithAdditionalPiecesForCastling(myColor,squares),myColor.getOther());
+		allMovesCalculator.excludeCastling();
+		List<Move> opponentMoves = allMovesCalculator.calculateAllMoves();
+
+
 		for (SquareCoordinates oneSquare : squares)
 		{
 			for (Move oneMove : opponentMoves)
@@ -156,12 +195,26 @@ public class KingPlayOneStep extends PlayOneStep
 		return true;
 	}
 	
+	private BoardState createBoardStateWithAdditionalPiecesForCastling(WhiteBlack myColor, List<SquareCoordinates> way)
+	{
+		Map<SquareCoordinates, ColoredPiece> positions = new LinkedHashMap<SquareCoordinates, ColoredPiece>();
+		positions.putAll(board.getPositions());
+		ColoredPiece rook = new ColoredPiece(Piece.ROOK, myColor);
+		for (SquareCoordinates square : way)
+		{
+			if (!positions.containsKey(square))
+			{
+				positions.put(square,rook);
+			}
+		}
+		
+		return BoardStateUtils.temporarilyChangePositionsOnly(board, positions);
+	}
 
 
 	private boolean calculateCastling = true;
 	private List<Move> moves;
 	
-	private List<Move> opponentMoves = null;
 	
 	
 	private static final int[] MINUS_ONE_ZERO_ONE = new int[]{-1,0,1};

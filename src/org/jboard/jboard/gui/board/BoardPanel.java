@@ -1,15 +1,12 @@
 package org.jboard.jboard.gui.board;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
+import static org.jboard.jboard.Constants.ANIMATION_SLEEP_MS;
+import static org.jboard.jboard.Constants.BOARD_SIZE;
+import static org.jboard.jboard.Constants.FIRST_COLUMN;
+
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
@@ -30,11 +27,6 @@ import org.jboard.jboard.chess.WhiteBlack;
 import org.jboard.jboard.gui.Images;
 import org.jboard.jboard.gui.ScaledImages;
 
-
-
-
-import static org.jboard.jboard.Constants.*;
-
 /**
  * A JPanel in which the chess board is printed.
  * This panel is also responsible for keyboard events which move pieces on the board.
@@ -44,24 +36,15 @@ import static org.jboard.jboard.Constants.*;
  *
  */
 @SuppressWarnings("serial")
-public class BoardPanel extends JPanel implements BoardResponder, KeyListener
+public class BoardPanel extends JPanel implements BoardResponder
 {
 	public BoardPanel(Frame ownerFrame, Images<BufferedImage> images)
 	{
 		super();
 		this.ownerFrame = ownerFrame;
-		addMouseListener(new MouseAdapter()
-		{
-			@Override public void mouseClicked(MouseEvent evt)
-			{
-				requestFocusInWindow();
-			}
-		});
-		addKeyListener(this);
-		setFocusable(true);
 		this.images = images;
-		
 		currentBoardState = InitialStateFactory.getInitialBoardState();
+		
 	}
 	
 	/**
@@ -90,16 +73,6 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		this.moveEnabled = moveEnabled;
 	}
 
-//	/**
-//	 * Resets the board to the initial state. The game can start now.
-//	 */
-//	public void resetBoard()
-//	{
-//		boardStateList = new LinkedList<>();
-//		boardStateList.add(InitialStateFactory.getInitialBoardState());
-//		setAppearsDown(WhiteBlack.WHITE);
-//		repaint();
-//	}
 	
 
 	/**
@@ -130,61 +103,29 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 * @see org.jboard.jboard.gui.board.BoardResponder#setState(org.jboard.jboard.chess.BoardState)
 	 */
-	@Override
-	public void keyPressed(KeyEvent e)
+	public void setState(BoardState boardState)
 	{
-		if (moveEnabled)
-		{
-			int keyCode = e.getKeyCode();
-			if ( (keyCode==KeyEvent.VK_KP_LEFT) || (keyCode==KeyEvent.VK_LEFT) )
-			{
-				moveMark(Direction.LEFT);
-			}
-			else if ( (keyCode==KeyEvent.VK_KP_RIGHT) || (keyCode==KeyEvent.VK_RIGHT) )
-			{
-				moveMark(Direction.RIGHT);
-			}
-			else if ( (keyCode==KeyEvent.VK_KP_UP) || (keyCode==KeyEvent.VK_UP) )
-			{
-				moveMark(Direction.UP);
-			}
-			else if ( (keyCode==KeyEvent.VK_KP_DOWN) || (keyCode==KeyEvent.VK_DOWN) )
-			{
-				moveMark(Direction.DOWN);
-			}
-			else if (keyCode==KeyEvent.VK_ENTER)
-			{
-				SquareCoordinates save_markChosen = markSource;
-				if (mark.equals(markSource))
-				{
-					markSource=null;
-				}
-				else if (markSource==null)
-				{
-					if (getActiveBoardState().getPositions().containsKey(mark))
-					{
-						markSource=mark;	
-					}
-				}
-				else
-				{
-					triggerMove(markSource,mark);
-					markSource = null;
-				}
-				if (save_markChosen!=null){repaintSquare(save_markChosen);}
-				if (markSource!=null){repaintSquare(markSource);}
-				repaintSquare(mark);
-			}
-		}
+		currentBoardState = boardState;
+		repaint();
 	}
 	
-	@Override
-	public void keyTyped(KeyEvent e){}
-	@Override
-	public void keyReleased(KeyEvent e){}
+	
+	/**
+	 * Repaints a rectangle of this {@link BoardPanel} which displays
+	 * the given square.
+	 * @param square
+	 */
+	protected void repaintSquare(SquareCoordinates square)
+	{
+		SquareArea area = areaOfSquare(square);
+		repaint(area.getxStart(),area.getyStart(),imageActualWidth,imageActualHeight);
+	}
 
+
+	
+	// The following two methods handle moves performed by the engine
 
 	/*
 	 * (non-Javadoc)
@@ -197,19 +138,23 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		triggerMove(move.getSource(),move.getDestination());
 	}
 	
-	
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jboard.jboard.gui.board.BoardResponder#setState(org.jboard.jboard.chess.BoardState)
+	/**
+	 * Called after the animation which displayed the move performed by
+	 * the engine has been finished, and updates the board to reflect
+	 * the new board-state after that move.
 	 */
-	public void setState(BoardState boardState)
+	protected void continueEngineMoveAfterAnimation()
 	{
-		currentBoardState = boardState;
+		Move move = nowAnimatedEngineMove;
+		nowAnimatedEngineMove = null;
+		BoardState stateAfterMove = BoardStateUtils.performMove(currentBoardState, move);
+		currentBoardState = stateAfterMove;
 		repaint();
 	}
+
 	
 	
+	// The following three methods handle moves performed by the user
 
 	/**
 	 * Called when either the user or the engine (the computer) performed a move,
@@ -279,54 +224,10 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		boardActivator.makeMove(move);
 	}
 	
-	/**
-	 * Called after the animation which displayed the move performed by
-	 * the engine has been finished, and updates the board to reflect
-	 * the new board-state after that move.
-	 */
-	protected void continueEngineMoveAfterAnimation()
-	{
-		Move move = nowAnimatedEngineMove;
-		nowAnimatedEngineMove = null;
-		BoardState stateAfterMove = BoardStateUtils.performMove(currentBoardState, move);
-		currentBoardState = stateAfterMove;
-		repaint();
-	}
 
 	
-	/**
-	 * Repaints a rectangle of this {@link BoardPanel} which displays
-	 * the given square.
-	 * @param square
-	 */
-	protected void repaintSquare(SquareCoordinates square)
-	{
-		SquareArea area = areaOfSquare(square);
-		repaint(area.getxStart(),area.getyStart(),imageActualWidth,imageActualHeight);
-	}
 	
-	/**
-	 * In response to the user pressing on the arrow keys, this method
-	 * moves the colored rectangle to another square on the board.
-	 * @param direction
-	 */
-	protected void moveMark(Direction direction)
-	{
-		repaintSquare(mark);
-		
-		if (appearsDown==WhiteBlack.BLACK)
-		{
-			direction = direction.flipDirection();
-		}
-		char column = mark.getColumn();
-		int row = mark.getRow();
-		if (Direction.LEFT==direction) {if (column>'a') {--column;} }
-		if (Direction.RIGHT==direction) {if (column<'h') {++column;} }
-		if (Direction.UP==direction) {if (row<BOARD_SIZE) {++row;}}
-		if (Direction.DOWN==direction) {if (row>1) {--row;}}
-		mark = new SquareCoordinates(column, row);
-		repaintSquare(mark);
-	}
+
 
 	
 	/*
@@ -342,11 +243,6 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 
 		paintSquares(graphics);
 		paintStandingPieces(graphics);
-		if (moveEnabled)
-		{
-			if (!(mark.equals(markSource))){paintMark(graphics,mark,Color.RED);}
-			if (markSource!=null) {paintMark(graphics,markSource,Color.BLUE);}
-		}
 
 		
 		if (animatedMovingPieceImage!=null)
@@ -395,16 +291,6 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 		}
 	}
 	
-	private void paintMark(Graphics graphics, SquareCoordinates square, Color color)
-	{
-		Graphics2D graphics2D = (Graphics2D)graphics;
-		graphics2D.setColor(color);
-		graphics2D.setStroke(new BasicStroke(MARK_SQUARE_STROKE));
-		SquareArea area = areaOfSquare(square);
-		graphics2D.drawRect(area.getxStart()+((int)(MARK_SQUARE_STROKE/2)),
-				area.getyStart()+((int)(MARK_SQUARE_STROKE/2)),
-				imageActualWidth-((int)MARK_SQUARE_STROKE), imageActualHeight-((int)MARK_SQUARE_STROKE));
-	}
 	
 	protected void calculateBoardAndImageWidthAndHeight()
 	{
@@ -498,8 +384,6 @@ public class BoardPanel extends JPanel implements BoardResponder, KeyListener
 	
 	protected WhiteBlack appearsDown = WhiteBlack.WHITE;
 	
-	protected SquareCoordinates mark = new SquareCoordinates('e', 2);
-	protected SquareCoordinates markSource = null;
 	
 	protected Move nowAnimatedEngineMove = null;
 	protected BoardState temporaryBoardState = null;

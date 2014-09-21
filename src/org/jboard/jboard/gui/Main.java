@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 
 import org.jboard.jboard.chessengine.ChessEngineProcess;
 import org.jboard.jboard.gui.board.BoardPanel;
+import org.jboard.jboard.gui.board.BoardPanelWithKeyboardSupport;
 import org.jboard.jboard.utilities.Container;
 import org.jboard.jboard.utilities.StringUtils;
 
@@ -132,7 +133,7 @@ public class Main
 	
 	private void createBoardPanelAndProcess(JFrame frame, Images<BufferedImage> images)
 	{
-		boardPanel = new BoardPanel(frame, images);
+		boardPanel = new BoardPanelWithKeyboardSupport(frame, images);
 		boardPanel.setMoveEnabled(false);
 		Container<ChessEngineProcess> processContainer = new Container<ChessEngineProcess>(null);
 		

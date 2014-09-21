@@ -242,7 +242,6 @@ public class GameManager
 				try {stream.close();}catch(IOException ioex){}
 			}
 		}
-
 	}
 
 

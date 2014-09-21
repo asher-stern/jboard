@@ -15,6 +15,7 @@ public class Constants
 	public static final char FIRST_COLUMN = 'a';
 	public static final char KING_COLUMN = 'e';
 	public static final float MARK_SQUARE_STROKE = 6.0f;
+	public static final float POTENTIAL_DESTINATION_STROKE = 6.0f;
 	public static final int ANIMATION_PIXEL_STEP = 8;
 	public static final long ANIMATION_SLEEP_MS = 20;
 	

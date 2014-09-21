@@ -15,21 +15,21 @@ public class BoardState
 {
 	public BoardState(Map<SquareCoordinates, ColoredPiece> positions,
 			SquareCoordinates inPassing, boolean whiteKingAlreadyMoved,
-			boolean whiteRookInRowA_AlreadyMoved,
-			boolean whiteRookInRowH_AlreadyMoved,
+			boolean whiteRookInColumnA_AlreadyMoved,
+			boolean whiteRookInColumnH_AlreadyMoved,
 			boolean blackKingAlreadyMoved,
-			boolean blackRookInRowA_AlreadyMoved,
-			boolean blackRookInRowH_AlreadyMoved)
+			boolean blackRookInColumnA_AlreadyMoved,
+			boolean blackRookInColumnH_AlreadyMoved)
 	{
 		super();
 		this.positions = positions;
 		this.inPassing = inPassing;
 		this.whiteKingAlreadyMoved = whiteKingAlreadyMoved;
-		this.whiteRookInColumnA_AlreadyMoved = whiteRookInRowA_AlreadyMoved;
-		this.whiteRookInColumnH_AlreadyMoved = whiteRookInRowH_AlreadyMoved;
+		this.whiteRookInColumnA_AlreadyMoved = whiteRookInColumnA_AlreadyMoved;
+		this.whiteRookInColumnH_AlreadyMoved = whiteRookInColumnH_AlreadyMoved;
 		this.blackKingAlreadyMoved = blackKingAlreadyMoved;
-		this.blackRookInColumnA_AlreadyMoved = blackRookInRowA_AlreadyMoved;
-		this.blackRookInColumnH_AlreadyMoved = blackRookInRowH_AlreadyMoved;
+		this.blackRookInColumnA_AlreadyMoved = blackRookInColumnA_AlreadyMoved;
+		this.blackRookInColumnH_AlreadyMoved = blackRookInColumnH_AlreadyMoved;
 	}
 	
 	

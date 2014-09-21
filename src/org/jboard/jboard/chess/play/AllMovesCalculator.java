@@ -41,33 +41,7 @@ public class AllMovesCalculator
 			ColoredPiece coloredPiece = positions.get(square);
 			if (coloredPiece.getColor()==color)
 			{
-				PlayOneStep playOneStep = null;
-				switch(coloredPiece.getPiece())
-				{
-				case BISHOP:
-					playOneStep = new BishopPlayOneStep(board,square);
-					break;
-				case KING:
-					KingPlayOneStep kingPlayOneStep = new KingPlayOneStep(board,square);
-					if (!calculateCastling)
-					{
-						kingPlayOneStep.excludeCastling();	
-					}
-					playOneStep = kingPlayOneStep;
-					break;
-				case KNIGHT:
-					playOneStep = new KnightPlayOneStep(board,square);
-					break;
-				case PAWN:
-					playOneStep = new PawnPlayOneStep(board, square);
-					break;
-				case QUEEN:
-					playOneStep = new QueenPlayOneStep(board, square);
-					break;
-				case ROOK:
-					playOneStep = new RookPlayOneStep(board, square);
-					break;
-				}
+				PlayOneStep playOneStep = PlayUtilities.getPlayOneStepForPiece(board,square,coloredPiece.getPiece(),calculateCastling);
 				
 				for (Move move : playOneStep.calculateAllMoves())
 				{
